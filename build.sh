@@ -1,14 +1,25 @@
 #!/bin/bash
-# build.sh
 
-echo "Building the project..."
-python -m pip install -r requirements.txt
+echo "🚀 Начинаем сборку проекта..."
 
-echo "Make migrations..."
-python manage.py makemigrations --noinput
+# Обновляем pip
+echo "📦 Обновляем pip..."
+pip install --upgrade pip
+
+# Устанавливаем зависимости
+echo "📦 Устанавливаем зависимости..."
+pip install -r requirements.txt
+
+# Проверяем установку Django
+echo "🔍 Проверяем установку Django..."
+python -c "import django; print(f'✅ Django {django.get_version()} установлен')"
+
+# Применяем миграции
+echo "🔄 Применяем миграции..."
 python manage.py migrate --noinput
 
-echo "Collect static files..."
+# Собираем статику
+echo "📁 Собираем статические файлы..."
 python manage.py collectstatic --noinput --clear
 
-echo "Build completed!"
+echo "✅ Сборка завершена!"
