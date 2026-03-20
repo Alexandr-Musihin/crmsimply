@@ -36,7 +36,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'crm_project.urls'
+ROOT_URLCONF = 'crm_prodject.urls'
 
 TEMPLATES = [
     {
@@ -54,7 +54,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'crm_project.wsgi.application'
+WSGI_APPLICATION = 'crm_prodject.wsgi.application'
 
 # База данных - ИСПОЛЬЗУЕМ PostgreSQL НА RENDER
 if 'DATABASE_URL' in os.environ:
