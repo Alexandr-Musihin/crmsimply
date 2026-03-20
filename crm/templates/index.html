@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Добро пожаловать{% endblock %}
+
+{% block content %}
+<div class="row min-vh-80 align-items-center">
+    <div class="col-lg-6 animate__animated animate__fadeInLeft">
+        <h1 class="display-3 fw-bold text-white mb-4">
+            Управляйте своим бизнесом
+            <span class="text-warning">эффективно</span>
+        </h1>
+        <p class="lead text-white-50 mb-4">
+            Простая CRM система для управления контактами и сделками. 
+            Всё, что нужно для роста вашего бизнеса в одном месте.
+        </p>
+        
+        {% if not user.is_authenticated %}
+            <div class="d-flex gap-3">
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-rocket-takeoff"></i> Начать бесплатно
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Войти
+                </a>
+            </div>
+        {% else %}
+            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-speedometer2"></i> Перейти в панель управления
+            </a>
+        {% endif %}
+        
+        <!-- Статистика -->
+        <div class="row mt-5">
+            <div class="col-4">
+                <div class="stat-card text-center">
+                    <i class="bi bi-people"></i>
+                    <h3 class="mt-2">1000+</h3>
+                    <p class="mb-0">Пользователей</p>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-card text-center">
+                    <i class="bi bi-graph-up"></i>
+                    <h3 class="mt-2">5000+</h3>
+                    <p class="mb-0">Сделок</p>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-card text-center">
+                    <i class="bi bi-star"></i>
+                    <h3 class="mt-2">99%</h3>
+                    <p class="mb-0">Довольных клиентов</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 animate__animated animate__fadeInRight">
+        <div class="floating">
+            <img src="https://via.placeholder.com/600x400/4e73df/ffffff?text=CRM+Dashboard" 
+                 class="img-fluid rounded-4 shadow-lg" 
+                 alt="CRM Dashboard Preview">
+        </div>
+        
+        <!-- Особенности -->
+        <div class="row mt-4 g-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="bi bi-person-lines-fill fs-1 text-primary"></i>
+                        <h5 class="mt-3">Управление контактами</h5>
+                        <p class="text-muted">Легко добавляйте и редактируйте контакты</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="bi bi-pie-chart fs-1 text-success"></i>
+                        <h5 class="mt-3">Отслеживание сделок</h5>
+                        <p class="text-muted">Воронка продаж и этапы сделок</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Преимущества -->
+<div class="row mt-5 pt-5">
+    <div class="col-12 text-center text-white mb-5">
+        <h2 class="display-5 fw-bold">Почему выбирают нас?</h2>
+        <p class="lead">Мы делаем управление бизнесом простым и приятным</p>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <i class="bi bi-lightning-charge fs-1 text-warning"></i>
+                <h4 class="mt-3">Быстро и просто</h4>
+                <p>Интуитивный интерфейс, с которым разберется каждый</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <i class="bi bi-shield-check fs-1 text-success"></i>
+                <h4 class="mt-3">Безопасно</h4>
+                <p>Ваши данные под надежной защитой</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <i class="bi bi-arrow-repeat fs-1 text-info"></i>
+                <h4 class="mt-3">Всегда доступно</h4>
+                <p>Работает везде, где есть интернет</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

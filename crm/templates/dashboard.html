@@ -1,0 +1,347 @@
+{% extends 'base.html' %}
+{% block title %}Панель управления{% endblock %}
+
+{% block content %}
+<!-- Приветствие и статистика -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="display-6">Добро пожаловать, {{ user.username }}!</h2>
+                        <p class="lead mb-0">Вот краткая статистика вашей CRM</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-graph-up-arrow" style="font-size: 4rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Статистические карточки -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card text-center">
+            <i class="bi bi-people"></i>
+            <h3 class="mt-2">{{ contacts|length }}</h3>
+            <p class="mb-0">Всего контактов</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card text-center" style="background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);">
+            <i class="bi bi-pie-chart"></i>
+            <h3 class="mt-2">{{ deals|length }}</h3>
+            <p class="mb-0">Активных сделок</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card text-center" style="background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);">
+            <i class="bi bi-trophy"></i>
+            <h3 class="mt-2">{{ deals|length }}</h3>
+            <p class="mb-0">Сумма сделок</p>
+        </div>
+    </div>
+</div>
+
+<!-- Панель действий -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="bi bi-lightning"></i> Быстрые действия</h4>
+                    <div>
+                        <a href="{% url 'contact_create' %}" class="btn btn-success">
+                            <i class="bi bi-person-plus"></i> Новый контакт
+                        </a>
+                        <a href="{% url 'deal_create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Новая сделка
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Поиск -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control form-control-lg" 
+                           id="searchInput" onkeyup="searchCards()" 
+                           placeholder="Поиск контактов и сделок...">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Контакты -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-people"></i> Контакты</h4>
+                <span class="badge bg-light text-dark">{{ contacts|length }} всего</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for contact in contacts %}
+                    <div class="col-md-4 mb-3 searchable-card">
+                        <div class="card h-100 contact-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                         style="width: 50px; height: 50px; font-size: 1.5rem;">
+                                        {{ contact.name|first|upper }}
+                                    </div>
+                                    <div class="ms-3">
+                                        <h5 class="card-title mb-0">{{ contact.name }}</h5>
+                                        <small class="text-muted">Добавлен: {{ contact.created_at|date:"d.m.Y" }}</small>
+                                    </div>
+                                </div>
+                                
+                                <p class="card-text">
+                                    <i class="bi bi-envelope text-muted"></i> {{ contact.email }}<br>
+                                    <i class="bi bi-telephone text-muted"></i> {{ contact.phone|default:"Не указан" }}
+                                </p>
+                                
+                                <div class="btn-group w-100">
+                                    <a href="{% url 'contact_edit' contact.pk %}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> Ред.
+                                    </a>
+                                    <a href="{% url 'contact_delete' contact.pk %}" class="btn btn-danger btn-sm delete-btn">
+                                        <i class="bi bi-trash"></i> Уд.
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <i class="bi bi-people"></i>
+                            <h5>Нет контактов</h5>
+                            <p>Создайте свой первый контакт</p>
+                            <a href="{% url 'contact_create' %}" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Создать контакт
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Сделки -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-pie-chart"></i> Сделки</h4>
+                <span class="badge bg-light text-dark">{{ deals|length }} всего</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for deal in deals %}
+                    <div class="col-md-4 mb-3 searchable-card">
+                        <div class="card h-100 deal-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="card-title mb-0">{{ deal.name }}</h5>
+                                    <span class="badge 
+                                        {% if deal.stage == 'won' %}bg-success
+                                        {% elif deal.stage == 'lost' %}bg-danger
+                                        {% elif deal.stage == 'lead' %}bg-info
+                                        {% elif deal.stage == 'negotiation' %}bg-warning
+                                        {% else %}bg-secondary{% endif %} status-badge">
+                                        {% if deal.stage == 'lead' %}Лиды
+                                        {% elif deal.stage == 'contacted' %}Связались
+                                        {% elif deal.stage == 'proposal' %}Предложение
+                                        {% elif deal.stage == 'negotiation' %}Переговоры
+                                        {% elif deal.stage == 'won' %}Выиграно
+                                        {% elif deal.stage == 'lost' %}Проиграно
+                                        {% else %}{{ deal.get_stage_display }}{% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar 
+                                            {% if deal.stage == 'won' %}bg-success
+                                            {% elif deal.stage == 'lost' %}bg-danger
+                                            {% else %}bg-primary{% endif %}" 
+                                            role="progressbar" 
+                                            style="width: 
+                                                {% if deal.stage == 'lead' %}20%
+                                                {% elif deal.stage == 'contacted' %}40%
+                                                {% elif deal.stage == 'proposal' %}60%
+                                                {% elif deal.stage == 'negotiation' %}80%
+                                                {% elif deal.stage == 'won' %}100%
+                                                {% elif deal.stage == 'lost' %}100%
+                                                {% else %}0%{% endif %};">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <p class="card-text">
+                                    <i class="bi bi-currency-dollar"></i> 
+                                    <strong>{{ deal.value|floatformat:2 }} ₽</strong><br>
+                                    <i class="bi bi-person"></i> 
+                                    Контакт: {{ deal.contact.name|default:"Не назначен" }}
+                                </p>
+                                
+                                <div class="btn-group w-100">
+                                    <a href="{% url 'deal_edit' deal.pk %}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> Ред.
+                                    </a>
+                                    <a href="{% url 'deal_delete' deal.pk %}" class="btn btn-danger btn-sm delete-btn">
+                                        <i class="bi bi-trash"></i> Уд.
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <i class="bi bi-pie-chart"></i>
+                            <h5>Нет сделок</h5>
+                            <p>Создайте свою первую сделку</p>
+                            <a href="{% url 'deal_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Создать сделку
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Диаграмма сделок (Chart.js) -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0"><i class="bi bi-bar-chart"></i> Статистика сделок</h4>
+            </div>
+            <div class="card-body">
+                <canvas id="dealChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Функция поиска
+    function searchCards() {
+        let input = document.getElementById('searchInput');
+        if (!input) return;
+        
+        let filter = input.value.toLowerCase();
+        let cards = document.getElementsByClassName('searchable-card');
+        
+        for (let i = 0; i < cards.length; i++) {
+            let text = cards[i].textContent.toLowerCase();
+            if (text.includes(filter)) {
+                cards[i].style.display = "";
+                cards[i].classList.add('animate__animated', 'animate__fadeIn');
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+    }
+    
+    // Статистика по этапам сделок
+    const stages = {
+        'lead': 0,
+        'contacted': 0,
+        'proposal': 0,
+        'negotiation': 0,
+        'won': 0,
+        'lost': 0
+    };
+    
+    // Подсчет реальных значений
+    {% for deal in deals %}
+        stages['{{ deal.stage }}'] = (stages['{{ deal.stage }}'] || 0) + 1;
+    {% endfor %}
+    
+    // Создание графика
+    const ctx = document.getElementById('dealChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Лиды', 'Связались', 'Предложение', 'Переговоры', 'Выиграно', 'Проиграно'],
+                datasets: [{
+                    data: [stages.lead, stages.contacted, stages.proposal, stages.negotiation, stages.won, stages.lost],
+                    backgroundColor: [
+                        '#36b9cc',
+                        '#4e73df',
+                        '#f6c23e',
+                        '#e74a3b',
+                        '#1cc88a',
+                        '#858796'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 12
+                            },
+                            padding: 10
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percent = total ? ((value / total) * 100).toFixed(1) : 0;
+                                return `${label}: ${value} (${percent}%)`;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    }
+    
+    // Автоматическое скрытие уведомлений
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                alert.classList.add('animate__animated', 'animate__fadeOut');
+                setTimeout(function() {
+                    if (alert.parentNode) alert.remove();
+                }, 1000);
+            });
+        }, 5000);
+    });
+</script>
+{% endblock %}
+{% endblock %}

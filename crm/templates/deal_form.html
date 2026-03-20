@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card animate__animated animate__fadeIn">
+            <div class="card-header {% if 'Добавление' in title %}bg-primary{% else %}bg-warning{% endif %} text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-{% if 'Добавление' in title %}plus-circle{% else %}pencil-square{% endif %}"></i>
+                    {{ title }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" id="dealForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                            <i class="bi bi-briefcase"></i> Название сделки *
+                        </label>
+                        <input type="text" 
+                               name="{{ form.name.name }}" 
+                               class="form-control form-control-lg" 
+                               id="{{ form.name.id_for_label }}"
+                               value="{{ form.name.value|default:'' }}"
+                               required
+                               placeholder="Например: Продажа продукта">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.stage.id_for_label }}" class="form-label">
+                            <i class="bi bi-diagram-3"></i> Этап сделки
+                        </label>
+                        <select name="{{ form.stage.name }}" class="form-select form-select-lg" id="{{ form.stage.id_for_label }}">
+                            <option value="lead" {% if form.stage.value == 'lead' %}selected{% endif %}>Лиды</option>
+                            <option value="contacted" {% if form.stage.value == 'contacted' %}selected{% endif %}>Связались</option>
+                            <option value="proposal" {% if form.stage.value == 'proposal' %}selected{% endif %}>Предложение</option>
+                            <option value="negotiation" {% if form.stage.value == 'negotiation' %}selected{% endif %}>Переговоры</option>
+                            <option value="won" {% if form.stage.value == 'won' %}selected{% endif %}>Выиграно</option>
+                            <option value="lost" {% if form.stage.value == 'lost' %}selected{% endif %}>Проиграно</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.value.id_for_label }}" class="form-label">
+                            <i class="bi bi-currency-dollar"></i> Сумма сделки
+                        </label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   name="{{ form.value.name }}" 
+                                   class="form-control form-control-lg" 
+                                   id="{{ form.value.id_for_label }}"
+                                   value="{{ form.value.value|default:'0' }}"
+                                   step="0.01"
+                                   min="0"
+                                   placeholder="0.00">
+                            <span class="input-group-text">₽</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.contact.id_for_label }}" class="form-label">
+                            <i class="bi bi-person"></i> Связанный контакт
+                        </label>
+                        <select name="{{ form.contact.name }}" class="form-select form-select-lg" id="{{ form.contact.id_for_label }}">
+                            <option value="">--- Выберите контакт ---</option>
+                            {% for contact in form.contact.field.queryset %}
+                                <option value="{{ contact.id }}" {% if form.contact.value|add:"0" == contact.id %}selected{% endif %}>
+                                    {{ contact.name }} ({{ contact.email }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-x-circle"></i> Отмена
+                        </a>
+                        <button type="submit" class="btn btn-{% if 'Добавление' in title %}primary{% else %}warning{% endif %} btn-lg">
+                            <i class="bi bi-check-circle"></i> Сохранить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Предупреждение при выборе этапа "Проиграно"
+    document.getElementById('{{ form.stage.id_for_label }}').addEventListener('change', function(e) {
+        if(this.value === 'lost') {
+            if(!confirm('Вы отмечаете сделку как проигранную. Продолжить?')) {
+                this.value = '{{ form.stage.value|default:"lead" }}';
+            }
+        }
+    });
+    
+    // Валидация суммы
+    document.getElementById('dealForm').addEventListener('submit', function(e) {
+        let value = document.getElementById('{{ form.value.id_for_label }}').value;
+        if(value < 0) {
+            e.preventDefault();
+            alert('Сумма сделки не может быть отрицательной');
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

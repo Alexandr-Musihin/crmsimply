@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Вход в систему{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card animate__animated animate__fadeIn">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-box-arrow-in-right"></i> Вход в систему</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person"></i> Имя пользователя
+                        </label>
+                        <input type="text" class="form-control form-control-lg" 
+                               id="username" name="username" required
+                               placeholder="Введите имя пользователя">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock"></i> Пароль
+                        </label>
+                        <input type="password" class="form-control form-control-lg" 
+                               id="password" name="password" required
+                               placeholder="Введите пароль">
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">Запомнить меня</label>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p>Нет аккаунта? <a href="{% url 'register' %}" class="text-primary">Зарегистрируйтесь</a></p>
+                    <a href="#" class="text-muted">Забыли пароль?</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Быстрый вход для демо -->
+        <div class="card mt-3 bg-light">
+            <div class="card-body">
+                <h6><i class="bi bi-info-circle"></i> Демо-доступ:</h6>
+                <p class="mb-1">Логин: demo_user</p>
+                <p class="mb-0">Пароль: demo12345</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
